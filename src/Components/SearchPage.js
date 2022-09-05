@@ -1,30 +1,45 @@
 import React, {useState} from "react";
 import {Link} from 'react-router-dom'
 import Book from "./Book";
+import * as API from "../BooksAPI"
 
 const SearchPage = ({allBooks, changeShelf}) => {
 
 
     const [query, setQuery] = useState("")
-    const updateQuery = (query) => {
-        setQuery(query.trim())
-    }
-
+    const [searchBooks, setSearchBooks] = useState([])
 
     console.log(allBooks)
+    const updateQuery = (query) => {
+        console.log(query.length)
+        if (query.length !== 0) {
+            setQuery(query.trim())
+            API.search(query, 10).then((books_) => {
+                setSearchBooks(books_.error ? [] : books_)
+            })
+        } else {
+            setSearchBooks([])
 
-    const showing_BooksTitle = query === "" ? allBooks : allBooks.filter(book => book.title.toLowerCase().includes(query.toLowerCase()))
-    console.log(showing_BooksTitle)
-    const showing_BooksAuth = query === "" ? [] : allBooks.filter(book => book.authors.toString().toLowerCase().includes(query.toLowerCase()))
-    const showing_BooksId = query === "" ? [] : allBooks.filter(book => book.id.toLowerCase().includes(query.toLowerCase()))
+        }
+    }
 
+    console.log(searchBooks)
+    let merged = searchBooks.map((sBook) => {
+        const intersectBook = allBooks.find((book) => {
+            return book.id === sBook.id
+        })
+        sBook.shelf = intersectBook ? intersectBook.shelf : "none"
 
+        return sBook
+
+    })
+
+    console.log("Merged", merged)
     return (
         <div className="search-books">
             <div className="search-books-bar">
                 <Link to="/"
-                      className="close-search"
-                >
+                      className="close-search">
                     Close
                 </Link>
                 <div className="search-books-input-wrapper">
@@ -39,27 +54,7 @@ const SearchPage = ({allBooks, changeShelf}) => {
             </div>
             <div className="search-books-results">
                 <ol className="books-grid">
-                    {showing_BooksTitle.map((book, index) => {
-                        return (
-                            <Book
-                                key={index}
-                                book={book}
-                                changeShelf={changeShelf}
-                                shelf={book.shelf}
-                            />
-                        )
-                    })}
-                    {showing_BooksAuth.map((book, index) => {
-                        return (
-                            <Book
-                                key={index}
-                                book={book}
-                                changeShelf={changeShelf}
-                                shelf={book.shelf}
-                            />
-                        )
-                    })}
-                    {showing_BooksId.map((book, index) => {
+                    {merged.map((book, index) => {
                         return (
                             <Book
                                 key={index}

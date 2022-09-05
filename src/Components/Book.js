@@ -2,7 +2,6 @@ import React from "react"
 
 const Book = (props) => {
 
-
     let Thumbnail
     if (props.book.imageLinks) {
         Thumbnail = props.book.imageLinks.thumbnail

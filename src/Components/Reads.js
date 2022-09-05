@@ -2,9 +2,11 @@ import React from "react";
 import {Link} from "react-router-dom";
 import "../App.css"
 import Book from "./Book";
+import PropTypes from "prop-types";
 
 const MyReads = (props) => {
 
+    const books = props.books
     const shelves = [
         {type: "currentlyReading", title: "Currently Reading"},
         {type: "wantToRead", title: "Want to Read"},
@@ -24,13 +26,12 @@ const MyReads = (props) => {
                             <div className="bookshelf-books">
                                 <ol className="books-grid">
                                     {
-                                        props.books.filter(book => book.shelf === shelf_.type)
+                                        books.filter(book => book.shelf === shelf_.type)
                                             .map(book => (
                                                 <li key={book.id}>
                                                     <Book
                                                         book={book}
                                                         changeShelf={props.changeShelf}
-
                                                         shelf={shelf_.type}
                                                     />
                                                 </li>
@@ -53,5 +54,7 @@ const MyReads = (props) => {
         </div>
     )
 }
-
+MyReads.propTypes = {
+    books: PropTypes.array.isRequired,
+}
 export default MyReads;

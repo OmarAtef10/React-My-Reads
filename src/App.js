@@ -27,11 +27,11 @@ function App() {
 
     const changeShelf = (book, shelf) => {
         API.update(book, shelf)
-        API.getAll().then((books) => {
-            setAllBooks(books)
-        })
-
+        book.shelf = shelf
+        setAllBooks(allBooks.filter((b) => b.id !== book.id).concat(book))
     }
+
+
     return (
         <Routes>
             <Route exact path={"/"}
